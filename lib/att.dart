@@ -12,30 +12,26 @@ class ATT {
   Future<bool> requestPermission() async {
     var result = false;
 
-    if (Platform.isIOS) {
-      TrackingStatus trackingStatus =
-          await AppTrackingTransparency.trackingAuthorizationStatus;
-      debugPrint("trackingStatus:$trackingStatus");
+    TrackingStatus trackingStatus =
+        await AppTrackingTransparency.trackingAuthorizationStatus;
+    debugPrint("trackingStatus:$trackingStatus");
 
-      try {
-        if (trackingStatus == TrackingStatus.notDetermined) {
-          var status =
-              await AppTrackingTransparency.requestTrackingAuthorization();
-          debugPrint("requestTrackingAuthorization:$status");
+    try {
+      if (trackingStatus == TrackingStatus.notDetermined) {
+        var status =
+            await AppTrackingTransparency.requestTrackingAuthorization();
+        debugPrint("requestTrackingAuthorization:$status");
 
-          if (status == TrackingStatus.authorized) {
-            result = true;
-          }
-        } else if (trackingStatus == TrackingStatus.authorized) {
-          result = true;
-        } else if (trackingStatus == TrackingStatus.notSupported) {
+        if (status == TrackingStatus.authorized) {
           result = true;
         }
-      } on PlatformException {
-        debugPrint('PlatformException was thrown');
+      } else if (trackingStatus == TrackingStatus.authorized) {
+        result = true;
+      } else if (trackingStatus == TrackingStatus.notSupported) {
+        result = true;
       }
-    } else {
-      result = true;
+    } on PlatformException {
+      debugPrint('PlatformException was thrown');
     }
 
     final idfa = await AppTrackingTransparency.getAdvertisingIdentifier();
